@@ -175,7 +175,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-surface-primary overflow-hidden">
-      {/* Atmospheric Background System */}
+      {/* Cinematic 3D Background */}
       <Scene3D />
 
       {/* Header */}
@@ -192,13 +192,13 @@ export default function Home() {
         onClose={() => setSidebarOpen(false)}
       />
 
-      {/* Main Content */}
-      <main className={`pt-16 h-screen transition-all duration-500 ease-spring ${sidebarOpen ? 'md:pl-72' : ''}`}>
+      {/* Main Content - floating above the 3D scene */}
+      <main className={`relative z-10 pt-16 h-screen transition-all duration-500 ease-spring ${sidebarOpen ? 'md:pl-72' : ''}`}>
         <div className="h-full flex flex-col max-w-3xl mx-auto px-4 md:px-6">
           {/* Messages Area */}
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto py-8 space-y-1 scrollbar-thin"
+            className="flex-1 overflow-y-auto py-8 space-y-1 scrollbar-thin chat-scroll-area"
           >
             <AnimatePresence mode="popLayout">
               {messages.map((message, index) => (
@@ -211,12 +211,12 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
+          {/* Input Area - floating glass with depth */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="pb-6 pt-2"
+            className="pb-6 pt-2 relative z-20"
           >
             <ChatInput onSend={handleSend} isLoading={isLoading} />
 
