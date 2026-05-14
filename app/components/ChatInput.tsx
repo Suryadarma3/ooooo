@@ -11,6 +11,7 @@ interface ChatInputProps {
 
 export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const [input, setInput] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = () => {
@@ -32,15 +33,15 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`
     }
   }, [input])
 
   const suggestions = [
     'Explain quantum computing',
     'Write a React component',
-    'Debug this Python code',
-    'Create a marketing strategy',
+    'Debug this code',
+    'Design a system',
   ]
 
   return (
@@ -49,26 +50,27 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
       <AnimatePresence>
         {input === '' && !isLoading && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex gap-2 mb-3 overflow-x-auto pb-2 scrollbar-hide"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex gap-2 mb-3 overflow-x-auto pb-1 scrollbar-hide"
           >
             {suggestions.map((suggestion, i) => (
               <motion.button
                 key={suggestion}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, duration: 0.3 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => {
                   setInput(suggestion)
                   textareaRef.current?.focus()
                 }}
-                className="flex-shrink-0 px-4 py-2 rounded-xl glass-panel text-xs md:text-sm text-slate-300 hover:text-cyber-cyan-light hover:border-cyber-cyan/40 transition-all duration-300 whitespace-nowrap"
+                className="flex-shrink-0 px-3.5 py-2 rounded-xl border border-border-subtle bg-surface-elevated/50 text-xs text-text-tertiary hover:text-text-secondary hover:border-border-hover hover:bg-surface-hover transition-all duration-200 whitespace-nowrap"
               >
-                <Sparkles className="w-3 h-3 inline mr-1.5 text-cyber-purple-light" />
+                <Sparkles className="w-3 h-3 inline mr-1.5 text-accent/50" />
                 {suggestion}
               </motion.button>
             ))}
@@ -76,38 +78,56 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
         )}
       </AnimatePresence>
 
-      {/* Input Area */}
+      {/* Input Area - Premium floating glass */}
       <motion.div
         layout
-        className="glass-panel rounded-2xl p-1 flex items-end gap-2"
+        className={`relative rounded-2xl transition-all duration-300 ${
+          isFocused
+            ? 'glass-panel-elevated ring-1 ring-accent/20'
+            : 'glass-panel hover:border-border-hover'
+        }`}
       >
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask anything..."
-          rows={1}
-          className="flex-1 bg-transparent text-slate-200 placeholder-slate-500 px-4 py-3 resize-none outline-none text-sm md:text-base min-h-[48px] max-h-[200px]"
-        />
+        {/* Subtle glow when focused */}
+        {isFocused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute -inset-px rounded-2xl bg-gradient-to-r from-accent/5 via-transparent to-accent-cyan/5 pointer-events-none"
+          />
+        )}
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleSubmit}
-          disabled={!input.trim() || isLoading}
-          className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-            input.trim() && !isLoading
-              ? 'bg-gradient-to-br from-cyber-purple to-cyber-cyan shadow-lg shadow-cyber-purple/40 hover:shadow-cyber-cyan/40'
-              : 'bg-slate-800/50 text-slate-500'
-          }`}
-        >
-          {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin text-cyber-cyan-light" />
-          ) : (
-            <Send className="w-5 h-5 text-white" />
-          )}
-        </motion.button>
+        <div className="relative flex items-end gap-2 p-1.5">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="Ask anything..."
+            rows={1}
+            className="flex-1 bg-transparent text-text-primary placeholder-text-muted px-3.5 py-2.5 resize-none outline-none text-sm min-h-[44px] max-h-[160px] leading-relaxed"
+          />
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleSubmit}
+            disabled={!input.trim() || isLoading}
+            className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 ${
+              input.trim() && !isLoading
+                ? 'btn-primary'
+                : 'bg-surface-hover text-text-muted'
+            }`}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-accent-light" />
+            ) : (
+              <Send className="w-4 h-4 text-white" />
+            )}
+          </motion.button>
+        </div>
       </motion.div>
     </div>
   )
