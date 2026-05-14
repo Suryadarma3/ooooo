@@ -174,13 +174,9 @@ export default function Home() {
   }))
 
   return (
-    <div className="relative min-h-screen bg-cyber-black overflow-hidden">
-      {/* 3D Background */}
+    <div className="relative min-h-screen bg-surface-primary overflow-hidden">
+      {/* Atmospheric Background System */}
       <Scene3D />
-
-      {/* Ambient Glow Effects */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-cyber-purple/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-cyber-cyan/10 rounded-full blur-[120px] pointer-events-none animate-pulse-glow animation-delay-400" />
 
       {/* Header */}
       <Header sidebarOpen={sidebarOpen} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -193,15 +189,16 @@ export default function Home() {
         onSelectSession={handleSelectSession}
         onNewChat={handleNewChat}
         onDeleteSession={handleDeleteSession}
+        onClose={() => setSidebarOpen(false)}
       />
 
       {/* Main Content */}
-      <main className={`pt-16 h-screen transition-all duration-300 ${sidebarOpen ? 'md:pl-72' : ''}`}>
-        <div className="h-full flex flex-col max-w-4xl mx-auto px-4 md:px-6">
+      <main className={`pt-16 h-screen transition-all duration-500 ease-spring ${sidebarOpen ? 'md:pl-72' : ''}`}>
+        <div className="h-full flex flex-col max-w-3xl mx-auto px-4 md:px-6">
           {/* Messages Area */}
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto py-6 space-y-2 scrollbar-thin"
+            className="flex-1 overflow-y-auto py-8 space-y-1 scrollbar-thin"
           >
             <AnimatePresence mode="popLayout">
               {messages.map((message, index) => (
@@ -216,9 +213,9 @@ export default function Home() {
 
           {/* Input Area */}
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
+            initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
+            transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="pb-6 pt-2"
           >
             <ChatInput onSend={handleSend} isLoading={isLoading} />
@@ -226,10 +223,10 @@ export default function Home() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="text-center text-xs text-slate-600 mt-3 flex items-center justify-center gap-1"
+              transition={{ delay: 0.8 }}
+              className="text-center text-xs text-text-muted mt-4 flex items-center justify-center gap-1.5"
             >
-              <Sparkles className="w-3 h-3" />
+              <Sparkles className="w-3 h-3 opacity-50" />
               Neural Lab can make mistakes. Consider checking important information.
             </motion.p>
           </motion.div>

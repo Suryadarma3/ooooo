@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Zap, Menu, X, BrainCircuit } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Menu, X } from 'lucide-react'
 
 interface HeaderProps {
   sidebarOpen: boolean
@@ -11,70 +11,82 @@ interface HeaderProps {
 export default function Header({ sidebarOpen, onToggleSidebar }: HeaderProps) {
   return (
     <motion.header
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-cyber-purple/20"
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 glass-panel"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
         {/* Left: Menu + Logo */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
             onClick={onToggleSidebar}
-            className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center hover:border-cyber-cyan/40 transition-colors"
+            className="w-9 h-9 rounded-xl flex items-center justify-center border border-border-subtle hover:border-border-hover hover:bg-surface-hover transition-all duration-200"
           >
-            {sidebarOpen ? (
-              <X className="w-5 h-5 text-slate-300" />
-            ) : (
-              <Menu className="w-5 h-5 text-slate-300" />
-            )}
+            <AnimatePresence mode="wait">
+              {sidebarOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X className="w-4 h-4 text-text-secondary" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="w-4 h-4 text-text-secondary" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.button>
 
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
             className="flex items-center gap-2.5"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyber-purple to-cyber-cyan flex items-center justify-center shadow-lg shadow-cyber-purple/30">
-              <BrainCircuit className="w-5 h-5 text-white" />
+            {/* Premium minimal logo mark */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-cyan flex items-center justify-center shadow-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.9"/>
+                <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+                <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.85"/>
+              </svg>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold gradient-text tracking-tight">
+              <h1 className="text-sm font-semibold text-text-primary tracking-tight">
                 Neural Lab
               </h1>
-              <p className="text-[10px] text-slate-500 -mt-0.5 tracking-widest uppercase">
-                AI Assistant
-              </p>
             </div>
           </motion.div>
         </div>
 
-        {/* Right: Status */}
+        {/* Right: Status indicator */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center gap-3"
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="flex items-center gap-2"
         >
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan/20">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle">
             <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-2 h-2 rounded-full bg-cyber-cyan shadow-[0_0_8px_rgba(10,189,198,0.6)]"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-1.5 h-1.5 rounded-full bg-emerald-400"
             />
-            <span className="text-xs text-cyber-cyan-light font-medium">Online</span>
+            <span className="text-xs text-text-tertiary font-medium">Online</span>
           </div>
-
-          <motion.div
-            whileHover={{ rotate: 180 }}
-            transition={{ duration: 0.5 }}
-            className="w-9 h-9 rounded-xl glass-panel flex items-center justify-center"
-          >
-            <Zap className="w-4 h-4 text-cyber-purple-light" />
-          </motion.div>
         </motion.div>
       </div>
     </motion.header>

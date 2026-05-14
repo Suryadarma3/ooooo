@@ -22,43 +22,40 @@ export default function ChatMessage({ message, index }: ChatMessageProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ 
         duration: 0.4, 
-        delay: index * 0.05,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        delay: Math.min(index * 0.04, 0.3),
+        ease: [0.16, 1, 0.3, 1]
       }}
-      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} mb-6`}
+      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} mb-5 group`}
     >
       {/* Avatar */}
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: index * 0.05 + 0.1, type: 'spring', stiffness: 300 }}
-        className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ${
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: Math.min(index * 0.04, 0.3) + 0.1, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
           isUser 
-            ? 'bg-gradient-to-br from-cyber-purple to-cyber-purple-neon shadow-lg shadow-cyber-purple/30' 
-            : 'bg-gradient-to-br from-cyber-cyan to-cyber-blue-electric shadow-lg shadow-cyber-cyan/30'
+            ? 'bg-accent/15 border border-accent/20' 
+            : 'bg-surface-hover border border-border-subtle'
         }`}
       >
         {isUser ? (
-          <User className="w-5 h-5 text-white" />
+          <User className="w-4 h-4 text-accent-light" />
         ) : (
-          <Bot className="w-5 h-5 text-cyber-black" />
+          <Bot className="w-4 h-4 text-text-secondary" />
         )}
       </motion.div>
 
       {/* Message Bubble */}
-      <motion.div
-        initial={{ opacity: 0, x: isUser ? 20 : -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.05 + 0.15, duration: 0.3 }}
-        className={`max-w-[80%] md:max-w-[70%] ${
+      <div
+        className={`max-w-[85%] md:max-w-[75%] ${
           isUser ? 'glass-bubble-user' : 'glass-bubble-ai'
-        } rounded-2xl px-5 py-4`}
+        } rounded-2xl ${isUser ? 'rounded-tr-md' : 'rounded-tl-md'} px-4 py-3`}
       >
-        <div className="markdown-content text-sm md:text-base leading-relaxed">
+        <div className="markdown-content text-[0.9375rem] leading-relaxed">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}
@@ -66,18 +63,18 @@ export default function ChatMessage({ message, index }: ChatMessageProps) {
               code({ node, inline, className, children, ...props }: any) {
                 const match = /language-(\w+)/.exec(className || '')
                 return !inline && match ? (
-                  <div className="relative my-3">
-                    <div className="absolute top-0 right-0 px-3 py-1 text-xs text-cyber-cyan/60 font-mono bg-cyber-dark/80 rounded-bl-lg rounded-tr-lg">
+                  <div className="relative my-4">
+                    <div className="absolute top-0 right-0 px-3 py-1.5 text-[10px] text-text-muted font-mono uppercase tracking-wider bg-surface-elevated rounded-bl-lg rounded-tr-xl border-b border-l border-border-subtle">
                       {match[1]}
                     </div>
-                    <pre className="!mt-0 !bg-cyber-dark/90 !border-cyber-purple/20">
+                    <pre className="!mt-0 !bg-surface-primary/80 !border-border-subtle">
                       <code className={className} {...props}>
                         {children}
                       </code>
                     </pre>
                   </div>
                 ) : (
-                  <code className="bg-cyber-dark/60 text-cyber-cyan-light px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                  <code className="bg-surface-hover text-accent-soft px-1.5 py-0.5 rounded-md text-[0.8125rem] font-mono border border-border-subtle" {...props}>
                     {children}
                   </code>
                 )
@@ -88,11 +85,11 @@ export default function ChatMessage({ message, index }: ChatMessageProps) {
           </ReactMarkdown>
         </div>
 
-        {/* Timestamp */}
-        <div className={`mt-2 text-xs text-slate-500 ${isUser ? 'text-right' : 'text-left'}`}>
+        {/* Timestamp - shows on hover */}
+        <div className={`mt-2 text-[11px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isUser ? 'text-right' : 'text-left'}`}>
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   )
 }
